@@ -1,5 +1,8 @@
 package com.royal.core.ioc;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
 public class Employee {
 	private int id;
 	private String name;
@@ -16,7 +19,8 @@ public class Employee {
 		return id;
 	}
 
-	public void setId(int id) {
+	@Autowired
+	public void setId(@Value("22") int id) {
 		this.id = id;
 	}
 
@@ -24,7 +28,8 @@ public class Employee {
 		return name;
 	}
 
-	public void setName(String name) {
+	@Autowired
+	public void setName(@Value("mohak") String name) {
 		this.name = name;
 	}
 
@@ -32,7 +37,8 @@ public class Employee {
 		return salary;
 	}
 
-	public void setSalary(double salary) {
+	@Autowired
+	public void setSalary(@Value("6786786") double salary) {
 		this.salary = salary;
 	}
 

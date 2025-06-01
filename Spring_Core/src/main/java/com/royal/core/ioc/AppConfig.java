@@ -1,9 +1,11 @@
 package com.royal.core.ioc;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@ComponentScan(basePackages = "com.royal.core.ioc")
 public class AppConfig {
 	
 	@Bean
