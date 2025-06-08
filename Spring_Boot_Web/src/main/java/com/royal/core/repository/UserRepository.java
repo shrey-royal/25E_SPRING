@@ -23,7 +23,13 @@ public class UserRepository {
 		if (user.getId() == 0) {
 			user.setId(currentId);
 		}
-		userDb.put(user.getId(), user);
+		userDb.put(currentId++, user);
+	}
+	
+	public void update(UserEntity user) {
+		if (userDb.containsKey(user.getId())) {
+			userDb.put(user.getId(), user);
+		}
 	}
 	
 	public void delete(int id) {

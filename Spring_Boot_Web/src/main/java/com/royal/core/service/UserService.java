@@ -17,4 +17,22 @@ public class UserService {
 	public List<UserEntity> getAllUsers() {
 		return userRepository.findAll();
 	}
+	
+	public void saveUser(UserEntity entity) {
+		userRepository.save(entity);
+	}
+	
+	public UserEntity getUserById(int id) {
+		return userRepository.findById(id);
+	}
+	
+	public void updateUser(UserEntity entity) {
+		userRepository.update(entity);
+	}
+	
+	public void deleteUser(int id) {
+		userRepository.delete(id);
+	}
+	
+	
 }
