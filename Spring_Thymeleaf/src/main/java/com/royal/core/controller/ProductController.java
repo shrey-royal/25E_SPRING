@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.royal.core.SpringThymeleafApplication;
 import com.royal.core.entity.Product;
 import com.royal.core.service.ProductService;
 
@@ -42,6 +41,22 @@ public class ProductController {
 			return "products/form";
 		}
 		service.save(product);
+		return "redirect:/products";
+	}
+	
+	@GetMapping("/edit/{id}")
+	public String edit(@PathVariable int id, Model model) {
+		Product product = service.getById(id);
+		if (product == null) {
+			return "error/404";
+		}
+		model.addAttribute("product", product);
+		return "products/form";
+	}
+	
+	@GetMapping("/delete/{id}")
+	public String delete(@PathVariable int id) {
+		service.delete(id);
 		return "redirect:/products";
 	}
 	
