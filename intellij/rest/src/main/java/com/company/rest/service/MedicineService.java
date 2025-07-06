@@ -29,4 +29,14 @@ public class MedicineService {
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
+
+    public Medicine update(Long id, Medicine medicine) {
+        return repository.findById(id)
+                .map(existing -> {
+                    existing.setName(medicine.getName());
+                    existing.setPrice(medicine.getPrice());
+                    existing.setExpiryDate(medicine.getExpiryDate());
+                    return repository.save(existing);
+                }).orElseThrow(() -> new RuntimeException("Medicine with id" + id + " not found"));
+    }
 }
