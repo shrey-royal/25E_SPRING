@@ -1,5 +1,7 @@
 package com.royal.core.entity;
 
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -34,4 +36,7 @@ public class User {
 	
 	@NotNull(message = "password is mandatory")
 	private String password;
+	
+	@Column(name = "profile_image_url")
+	private String profileImageUrl;
 }
