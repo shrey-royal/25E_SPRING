@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,15 +20,17 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+	
 	private final UserRepository repository;
 	private final Cloudinary cloudinary;
+	private final PasswordEncoder encoder;
 	
 	@Override
 	public UserResponseDTO createUser(UserRequestDTO dto, MultipartFile image) throws IOException {
 		User user = new User();
 		user.setName(dto.getName());
 		user.setEmail(dto.getEmail());
-		user.setPassword(dto.getPassword());
+		user.setPassword(encoder.encode(dto.getPassword()));
 		
 		if (image != null && !image.isEmpty()) {
 			Map<?, ?> uploadResultMap = cloudinary.uploader().upload(image.getBytes(), Map.of());
@@ -58,7 +61,7 @@ public class UserServiceImpl implements UserService {
 		
 		user.setName(dto.getName());
 		user.setEmail(dto.getEmail());
-		user.setPassword(dto.getPassword());
+		user.setPassword(encoder.encode(dto.getPassword()));
 		
 		if (image != null && !image.isEmpty()) {
 			Map<?, ?> uploadResultMap = cloudinary.uploader().upload(image.getBytes(), Map.of());

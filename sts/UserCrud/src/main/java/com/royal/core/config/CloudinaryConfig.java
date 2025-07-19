@@ -24,7 +24,7 @@ public class CloudinaryConfig {
 	public Cloudinary cloudinary() {
 		Map<String, String> config = new HashMap<>();
 		
-		config.put("cloudName", cloudName);
+		config.put("cloud_name", cloudName);
 		config.put("api_key", apiKey);
 		config.put("api_secret", apiSecret);
 		
