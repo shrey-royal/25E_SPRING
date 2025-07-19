@@ -1,22 +1,26 @@
 package com.royal.core.controller;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.royal.core.entity.User;
+import com.royal.core.dto.UserRequestDTO;
+import com.royal.core.dto.UserResponseDTO;
 import com.royal.core.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,36 +30,44 @@ public class UserController {
 
 	private final UserService service;
 	
-	@PostMapping
-	public ResponseEntity<User> save(@RequestPart("user") String userJson, @RequestPart(value = "file", required = false) MultipartFile file) {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			User user = mapper.readValue(userJson, User.class);
-			
-			if(file != null && !file.isEmpty()) {
-				String imgUrl = service.uploadFile(file);
-				user.setProfileImageUrl(imgUrl);
-			}
-			return ResponseEntity.ok(service.save(user));
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}
+	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<UserResponseDTO> createUser(
+			@Valid @RequestPart("user") UserRequestDTO user,
+			@RequestPart(value = "image", required = false) MultipartFile image
+			) throws IOException {
+		return ResponseEntity.status(HttpStatus.CREATED).body(service.createUser(user, image));
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<User>> getAllUsers() {
-		return ResponseEntity.ok(service.getAll());
-	}
-	
-	@PutMapping
-	public ResponseEntity<User> update(@RequestBody User user) {
-		return ResponseEntity.ok(service.update(user));
+	public List<UserResponseDTO> getAll() {
+		return service.getAllUsers();
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<User> getUserById(@PathVariable Long id) {
-		return service.findById(id)
-				.map(ResponseEntity::ok)
-				.orElse(ResponseEntity.notFound().build());
-	}
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getUserById(id));
+    }
+	
+	
+	@PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UserResponseDTO> updateUser(
+            @PathVariable Long id,
+            @Valid @RequestPart("user") UserRequestDTO user,
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ) throws IOException {
+        return ResponseEntity.ok(service.updateUser(id, user, image));
+    }
+
+	@DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        service.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
 }
+
+
+/*
+
+user: {"name":"user","email":"user@mail.com","password":"user.123"}
+image: <file>
+*/
