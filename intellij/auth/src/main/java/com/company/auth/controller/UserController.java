@@ -15,13 +15,13 @@ import java.util.List;
 public class UserController {
     private final UserService service;
 
-    @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO user) {
+    @PostMapping("/register")
+    public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO user) {
         return ResponseEntity.ok(service.saveUser(user));
     }
 
-    @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-        return ResponseEntity.ok(service.getAllUsers());
-    }
+//    @GetMapping
+//    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+//        return ResponseEntity.ok(service.getAllUsers());
+//    }
 }
