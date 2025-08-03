@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,6 +17,16 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public boolean authenticate(String username, String password) {
+        Optional<User> userOpt = repository.findByUsername(username);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            return passwordEncoder.matches(password, user.getPassword());
+        }
+        return false;
+    }
 
     @Override
     public UserResponseDTO saveUser(UserRequestDTO userDTO) {
