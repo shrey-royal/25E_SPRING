@@ -2,15 +2,15 @@ package com.paymentgateway.dto;
 
 import com.paymentgateway.enums.PaymentMethod;
 import com.paymentgateway.enums.PaymentStatus;
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class PaymentDTO {
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Builder
     public static class PaymentRequest {
         private BigDecimal amount;
@@ -24,6 +24,8 @@ public class PaymentDTO {
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Builder
     public static class PaymentResponse {
         private Long id;
@@ -31,13 +33,20 @@ public class PaymentDTO {
         private BigDecimal amount;
         private String currency;
         private String customerEmail;
+        private String customerName;
+        private String description;
         private PaymentStatus status;
+        private PaymentMethod paymentMethod;
         private String authorizeTransactionId;
+        private String responseCode;
         private String responseMessage;
         private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Builder
     @ToString(exclude = {"cardNumber", "cvv"})
     public static class CardDetails {
@@ -49,6 +58,8 @@ public class PaymentDTO {
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Builder
     public static class ApiResponse<T> {
         private boolean success;

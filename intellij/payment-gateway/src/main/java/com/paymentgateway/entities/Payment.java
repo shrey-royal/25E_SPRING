@@ -7,13 +7,15 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "payments")
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +35,20 @@ public class Payment {
     private String authorizeTransactionId;
     private String responseCode;
     private String responseMessage;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    public Payment(String transactionId, BigDecimal amount, String currency,
+                   String customerEmail, String customerName, String description,
+                   PaymentMethod paymentMethod) {
+        this.transactionId = transactionId;
+        this.amount = amount;
+        this.currency = currency;
+        this.customerEmail = customerEmail;
+        this.customerName = customerName;
+        this.description = description;
+        this.paymentMethod = paymentMethod;
+        this.status = PaymentStatus.PENDING;
+    }
 }
 
