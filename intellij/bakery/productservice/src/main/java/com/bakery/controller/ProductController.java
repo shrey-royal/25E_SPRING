@@ -3,8 +3,10 @@ package com.bakery.controller;
 import com.bakery.entity.Product;
 import com.bakery.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,9 +21,9 @@ public class ProductController {
         return ResponseEntity.ok(service.findAll());
     }
 
-    @PostMapping
-    public ResponseEntity<Product> saveProduct(@RequestBody Product product) {
-        return ResponseEntity.ok(service.save(product));
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Product> saveProduct(@RequestPart("product") Product product, @RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
+        return ResponseEntity.ok(service.save(product, image));
     }
 
     @GetMapping("/{id}")
