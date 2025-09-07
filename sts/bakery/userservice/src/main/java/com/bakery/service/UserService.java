@@ -1,16 +1,14 @@
 package com.bakery.service;
 
-import org.springframework.stereotype.Service;
+import com.bakery.dto.UserRequest;
+import com.bakery.entity.User;
+import java.util.List;
 
-import lombok.RequiredArgsConstructor;
-
-@Service
-@RequiredArgsConstructor
-public class UserService {
-	//signup: save: user
-	//login
-	//getme: getbyid: user
-	//getall: admin
-	//update: user
-	//delete: user
+public interface UserService {
+    User create(UserRequest dto);
+    User getById(Long id);
+    User getByUsername(String username);
+    List<User> getAll();
+    User update(Long id, UserRequest dto);
+    void delete(Long id);
 }
