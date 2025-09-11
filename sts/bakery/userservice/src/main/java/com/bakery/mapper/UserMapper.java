@@ -3,27 +3,27 @@ package com.bakery.mapper;
 import com.bakery.dto.UserRequest;
 import com.bakery.dto.UserResponse;
 import com.bakery.entity.User;
-import com.bakery.enums.Role;
 
 public class UserMapper {
-    public static User toEntity(UserRequest dto) {
-        if (dto == null) return null;
+	public static User toEntity(UserRequest request) {
+        if (request == null) return null;
         return User.builder()
-                .username(dto.getUsername())
-                .email(dto.getEmail())
-                .password(dto.getPassword())
-                .imageUrl(dto.getImageUrl())
-                .role(dto.getRole() == null ? Role.USER : dto.getRole())
+                .name(request.getName())
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .role(request.getRole())
+                .imageUrl(request.getImageUrl())
                 .build();
     }
 
-    public static UserResponse toDto(User u) {
-        if (u == null) return null;
+    public static UserResponse toResponse(User user) {
+        if (user == null) return null;
         return UserResponse.builder()
-                .id(u.getId())
-                .username(u.getUsername())
-                .email(u.getEmail())
-                .imageUrl(u.getImageUrl())
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .imageUrl(user.getImageUrl())
                 .build();
     }
 }

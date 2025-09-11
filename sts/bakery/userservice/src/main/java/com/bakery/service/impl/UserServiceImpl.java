@@ -1,80 +1,57 @@
 package com.bakery.service.impl;
 
+import java.io.IOException;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.bakery.dto.UserRequest;
+import com.bakery.dto.UserResponse;
 import com.bakery.entity.User;
+import com.bakery.enums.Role;
 import com.bakery.mapper.UserMapper;
 import com.bakery.repository.UserRepository;
 import com.bakery.service.UserService;
-
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 
 @Service
-@Transactional
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+	@Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private Cloudinary cloudinary;
 
     @Override
-    public User create(UserRequest dto) {
-        if (userRepository.existsByUsername(dto.getUsername())) {
-            throw new IllegalArgumentException("username already exists");
-        }
-        if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new IllegalArgumentException("email already exists");
-        }
-
-        User user = UserMapper.toEntity(dto);
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        return userRepository.save(user);
-    }
-
-    @Override
-    public User getById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-    }
-
-    @Override
-    public User getByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-    }
-
-    @Override
-    public List<User> getAll() {
-        return userRepository.findAll();
-    }
-
-    @Override
-    public User update(Long id, UserRequest dto) {
-        User existing = getById(id);
-        if (!existing.getUsername().equals(dto.getUsername()) && userRepository.existsByUsername(dto.getUsername())) {
-            throw new IllegalArgumentException("username already exists");
-        }
-        if (!existing.getEmail().equals(dto.getEmail()) && userRepository.existsByEmail(dto.getEmail())) {
-            throw new IllegalArgumentException("email already exists");
+    public UserResponse register(UserRequest request, MultipartFile file) {
+        try {
+            if (file != null && !file.isEmpty()) {
+                Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(),
+                        ObjectUtils.asMap("folder", "bakery_users"));
+                request.setImageUrl((String) uploadResult.get("secure_url"));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Image upload failed", e);
         }
 
-        existing.setUsername(dto.getUsername());
-        existing.setEmail(dto.getEmail());
-        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
-            existing.setPassword(passwordEncoder.encode(dto.getPassword()));
+        if (request.getRole() == null) {
+            request.setRole(Role.ROLE_USER);
         }
-        existing.setImageUrl(dto.getImageUrl());
-        existing.setRole(dto.getRole());
-        return userRepository.save(existing);
+
+        User savedUser = userRepository.save(UserMapper.toEntity(request));
+        return UserMapper.toResponse(savedUser);
     }
 
     @Override
-    public void delete(Long id) {
-        userRepository.deleteById(id);
+    public UserResponse login(String email, String password) {
+        return userRepository.findByEmail(email)
+                .filter(u -> u.getPassword().equals(password)) // ⚠️ in prod use BCrypt
+                .map(UserMapper::toResponse)
+                .orElse(null);
     }
+
 }

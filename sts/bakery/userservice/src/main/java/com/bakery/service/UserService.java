@@ -1,14 +1,11 @@
 package com.bakery.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.bakery.dto.UserRequest;
-import com.bakery.entity.User;
-import java.util.List;
+import com.bakery.dto.UserResponse;
 
 public interface UserService {
-    User create(UserRequest dto);
-    User getById(Long id);
-    User getByUsername(String username);
-    List<User> getAll();
-    User update(Long id, UserRequest dto);
-    void delete(Long id);
+	UserResponse register(UserRequest request, MultipartFile file);
+    UserResponse login(String email, String password);
 }

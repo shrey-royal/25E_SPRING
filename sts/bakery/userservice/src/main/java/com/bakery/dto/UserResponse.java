@@ -1,14 +1,20 @@
 package com.bakery.dto;
 
-import lombok.*;
+import com.bakery.enums.Role;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class UserResponse {
-    private Long id;
-    private String username;
+	private Long id;
+    private String name;
     private String email;
+    private Role role;
     private String imageUrl;
 }
